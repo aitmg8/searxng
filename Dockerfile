@@ -1,4 +1,4 @@
-FROM docker.io/searxng:latest
+FROM docker.io/searxng/searxng:latest
 
 ARG SEARXNG_BASE_URL
 ARG SEARXNG_UWSGI_WORKERS

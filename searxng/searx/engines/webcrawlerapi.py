@@ -1,45 +1,56 @@
 # /searx/engines/webcrawlerapi.py
-
 from json import loads
 from urllib.parse import urlencode
-import requests
+from searx.engines import Engine
 
-# Engine metadata
+# This must be defined for the engine to be recognized by SearxNG
 engine_type = "online"
-categories = ["general"]
-paging = True
 
-base_url = "https://api.webcrawlerapi.com/v1/search"
+# The name of the engine, usually the same as the file name without .py
+name = "webcrawlerapi"
 
-# This will be read from settings.yml
-api_key = None
+class WebcrawlerApiEngine(Engine):
+    """
+    SearxNG engine for WebCrawlerAPI.
+    """
 
-def request(query, params):
-    global api_key
-    if not api_key:
+    def request(self, query, params):
+        # We can access engine-specific settings from the `self` object.
+        # The API key is defined in settings.yml under `api_key`.
+        api_key = self.api_key
+
+        if not api_key:
+            # Handle case where API key is missing
+            self.logger.error("WebcrawlerAPI: API key not configured.")
+            return
+
+        payload = {
+            "q": query,
+            "api_key": api_key,
+            "page": params["pageno"],
+            "num": params["number_of_results"]
+        }
+
+        # SearxNG's Engine class has a built-in `request` method that takes a URL.
+        # We just need to construct the URL and pass it.
+        params["url"] = f"https://api.webcrawlerapi.com/v1/search?{urlencode(payload)}"
         return params
 
-    payload = {
-        "q": query,
-        "api_key": api_key,
-        "page": params["pageno"],
-        "num": params["number_of_results"]
-    }
+    def response(self, resp):
+        """
+        Parses the JSON response from WebCrawlerAPI and returns a list of results.
+        """
+        results = []
+        try:
+            data = loads(resp.text)
+            for item in data.get("results", []):
+                results.append({
+                    "title": item.get("title", ""),
+                    "url": item.get("url", ""),
+                    "content": item.get("snippet", ""),
+                })
+        except Exception as e:
+            # Use the logger for better error handling in SearxNG
+            self.logger.error("WebCrawlerAPI parse error: %s", e)
 
-    params["url"] = f"{base_url}?{urlencode(payload)}"
-    return params
-
-def response(resp):
-    results = []
-    try:
-        data = loads(resp.text)
-        for item in data.get("results", []):
-            results.append({
-                "title": item.get("title", ""),
-                "url": item.get("url", ""),
-                "content": item.get("snippet", ""),
-            })
-    except Exception as e:
-        print("WebCrawlerAPI parse error:", e)
-
-    return results
+        return results

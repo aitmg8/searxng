@@ -1,13 +1,17 @@
-# searxng/settings.yml
+# see https://docs.searxng.org/admin/settings/settings.html#settings-use-default-settings
 use_default_settings: true
 
 general:
   debug: true
 
 search:
-  formats: [html, json, csv]
+  formats:
+    - html
+    - json
+    - csv
 
 server:
+  # base_url is defined in the SEARXNG_BASE_URL environment variable
   secret_key: "my-custom-secret-key-from-env"
   limiter: false
   image_proxy: true
@@ -15,19 +19,23 @@ server:
 ui:
   static_use_hash: true
 
+# Redis configuration (optional)
+# redis:
+#   url: ${REDIS_URL}
+
 # -------------------------
 # Custom engines
 # -------------------------
 engines:
   - name: webcrawlerapi
-    engine: webcrawlerapi            # <-- must match file name WITHOUT .py
+    engine: webcrawlerapi
     api_key: !env WEBCRAWLERAPI_KEY
     categories: general
     timeout: 5.0
     disabled: false
 
   - name: webcrawlerapi-images
-    engine: webcrawlerapi_images     # <-- must match file name WITHOUT .py
+    engine: webcrawlerapi_images
     api_key: !env WEBCRAWLERAPI_KEY
     categories: images
     timeout: 5.0

@@ -1,5 +1,5 @@
 # ---- Base image ----
-FROM docker.io/searxng/searxng:latest
+FROM ghcr.io/searxng/searxng:latest
 
 # ---- Railway build-time args (optional) ----
 ARG SEARXNG_BASE_URL

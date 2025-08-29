@@ -1,26 +1,30 @@
 # /searx/engines/webcrawlerapi.py
+
 from json import loads
 from urllib.parse import urlencode
 from searx.engines import Engine
+import logging
+
+# SearxNG requires the 'name' variable to be defined at the top level.
+# It must match the key in settings.yml.
+name = "webcrawlerapi"
 
 # This must be defined for the engine to be recognized by SearxNG
 engine_type = "online"
-
-# The name of the engine, usually the same as the file name without .py
-name = "webcrawlerapi"
 
 class WebcrawlerApiEngine(Engine):
     """
     SearxNG engine for WebCrawlerAPI.
     """
+    # The categories are now defined within the class or in settings.yml
+    # Setting them here is the default, but settings.yml will override it.
+    categories = ["general"]
 
     def request(self, query, params):
-        # We can access engine-specific settings from the `self` object.
-        # The API key is defined in settings.yml under `api_key`.
+        # Access the API key from the self object, which gets it from settings.yml
         api_key = self.api_key
 
         if not api_key:
-            # Handle case where API key is missing
             self.logger.error("WebcrawlerAPI: API key not configured.")
             return
 
@@ -32,7 +36,6 @@ class WebcrawlerApiEngine(Engine):
         }
 
         # SearxNG's Engine class has a built-in `request` method that takes a URL.
-        # We just need to construct the URL and pass it.
         params["url"] = f"https://api.webcrawlerapi.com/v1/search?{urlencode(payload)}"
         return params
 

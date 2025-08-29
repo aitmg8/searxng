@@ -1,30 +1,17 @@
+# ✅ Updated to copy the new hyphenated file name.
+
 FROM docker.io/searxng/searxng:latest
 
-ARG SEARXNG_BASE_URL
-ARG SEARXNG_UWSGI_WORKERS
-ARG SEARXNG_UWSGI_THREADS
-ARG PORT
-
-ENV BASE_URL=${SEARXNG_BASE_URL}
-ENV PORT=${PORT:-8080}
-ENV UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS:-4}
-ENV UWSGI_THREADS=${SEARXNG_UWSGI_THREADS:-4}
-ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
-
-# Config
+# Copy your custom configuration and engines
 COPY ./searxng /etc/searxng
-COPY ./searxng /etc/searxng-backup
-
-# ✅ Copy both engines at once (works even if one is missing)
+# Change the COPY command to use a hyphen
 COPY ./searxng/searx/engines/webcrawlerapi*.py /usr/local/searxng/searx/engines/
 
-# Ensure the searxng process can read them cleanly
+# Fix ownership of the copied files
+RUN chown -R searxng:searxng /etc/searxng
 RUN chown searxng:searxng /usr/local/searxng/searx/engines/webcrawlerapi*.py || true
 
-# (Optional: prove they’re there at build time)
-RUN ls -la /usr/local/searxng/searx/engines | sed -n '1,200p'
-
-# Entrypoint
+# Run the entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

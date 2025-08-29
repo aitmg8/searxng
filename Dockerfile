@@ -28,8 +28,8 @@ COPY ./searxng /etc/searxng-backup
 # Expecting repo layout:
 # searxng/searx/engines/webcrawlerapi.py
 # searxng/searx/engines/webcrawlerapi_images.py
-COPY ./searxng/searx/engines/webcrawlerapi.py         /usr/local/searxng/searx/engines/
-COPY ./searxng/searx/engines/webcrawlerapi_images.py  /usr/local/searxng/searx/engines/
+COPY ./engines/webcrawlerapi.py         /usr/local/searxng/searx/engines/
+COPY ./engines/webcrawlerapi_images.py  /usr/local/searxng/searx/engines/
 
 # ---- Entrypoint (your script) ----
 COPY entrypoint.sh /entrypoint.sh

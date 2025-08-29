@@ -29,17 +29,16 @@ ui:
 #   url: !env REDIS_URL
 
 engines:
-  webcrawlerapi:
-    categories:
-      - general
+  - name: webcrawlerapi
+    engine: webcrawlerapi
     api_key: !env WEBCRAWLERAPI_KEY
+    categories: general
     timeout: 5.0
     disabled: false
 
-  # Renamed to use a hyphen to avoid the engine loader bug
-  webcrawlerapi-images:
-    categories:
-      - images
+  - name: webcrawlerapiimages
+    engine: webcrawlerapi-images
     api_key: !env WEBCRAWLERAPI_KEY
+    categories: images
     timeout: 5.0
     disabled: false

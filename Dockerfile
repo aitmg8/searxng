@@ -15,9 +15,11 @@ ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
 COPY ./searxng /etc/searxng
 COPY ./searxng /etc/searxng-backup
 
-# ✅ Copy your custom engines into SearxNG’s code path
-COPY ./searxng/searx/engines/webcrawlerapi.py /usr/local/searxng/searx/engines
-COPY ./searxng/searx/engines/webcrawlerapi_images.py /usr/local/searxng/searx/engines
+# ✅ Copy both engines at once (works even if one is missing)
+COPY ./searxng/searx/engines/webcrawlerapi*.py /usr/local/searxng/searx/engines/
+
+# Ensure the searxng process can read them cleanly
+RUN chown searxng:searxng /usr/local/searxng/searx/engines/webcrawlerapi*.py || true
 
 # (Optional: prove they’re there at build time)
 RUN ls -la /usr/local/searxng/searx/engines | sed -n '1,200p'

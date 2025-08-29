@@ -1,27 +1,19 @@
-# searx/engines/webcrawlerapi_images.py
+# ✅ This file is new. The name and filename have been changed.
 
 from json import loads
 from urllib.parse import urlencode
 from searx.engines import Engine
 import logging
 
-# SearxNG requires the 'name' variable to be defined at the top level.
-# It must match the key in settings.yml.
-name = "webcrawlerapi_images"
-
-# This must be defined for the engine to be recognized by SearxNG
+# New file name and name variable, using a hyphen instead of an underscore
+name = "webcrawlerapi-images"
 engine_type = "online"
 
 class WebcrawlerApiImagesEngine(Engine):
-    """
-    SearxNG engine for WebCrawlerAPI images.
-    """
     categories = ["images"]
 
     def request(self, query, params):
-        # Access the API key from the self object, which gets it from settings.yml
         api_key = self.api_key
-
         if not api_key:
             self.logger.error("WebcrawlerAPI Images: API key not configured.")
             return
@@ -40,9 +32,6 @@ class WebcrawlerApiImagesEngine(Engine):
         return params
 
     def response(self, resp):
-        """
-        Parses the JSON response from WebCrawlerAPI and returns a list of image results.
-        """
         results = []
         try:
             data = loads(resp.text)

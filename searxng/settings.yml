@@ -16,7 +16,7 @@ search:
 server:
   # Will be picked up from SEARXNG_BASE_URL env in Docker
   base_url: !env BASE_URL
-  secret_key: "my-custom-secret-key-from-env"
+  secret_key: "my-custom-secret-key-from-env" # It is highly recommended to set this as a secret in your Railway variables
   limiter: false
   image_proxy: true
   port: !env PORT
@@ -31,19 +31,25 @@ ui:
 #   url: !env REDIS_URL
 
 engines:
-  # --- Default engines are loaded via use_default_settings ---
-  # Add custom ones below
+  # The key for each engine is its name (e.g., 'webcrawlerapi').
+  # The value is a dictionary of its configuration.
 
-  - name: webcrawlerapi
-    engine: webcrawlerapi
+  webcrawlerapi:
+    categories:
+      - general
     api_key: !env WEBCRAWLERAPI_KEY
-    categories: general
     timeout: 5.0
     disabled: false
 
-  - name: webcrawlerapi-images
-    engine: webcrawlerapi_images
+  webcrawlerapi_images:
+    categories:
+      - images
     api_key: !env WEBCRAWLERAPI_KEY
-    categories: images
     timeout: 5.0
     disabled: false
+
+# You can add or override other settings here as needed.
+# For example, to enable a specific default engine, you can set its disabled property to false:
+# engines:
+#   wikipedia:
+#     disabled: false

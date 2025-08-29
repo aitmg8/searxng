@@ -1,0 +1,55 @@
+# settings.yml for SearXNG
+# Docs: https://docs.searxng.org/admin/settings/settings.html
+
+use_default_settings: true
+
+general:
+  debug: true
+  instance_name: "SearXNG Railway"
+
+search:
+  formats:
+    - html
+    - json
+    - csv
+
+server:
+  # Will be picked up from SEARXNG_BASE_URL env in Docker
+  base_url: !env BASE_URL
+  secret_key: "my-custom-secret-key-from-env" # It is highly recommended to set this as a secret in your Railway variables
+  limiter: false
+  image_proxy: true
+  port: !env PORT
+
+ui:
+  static_use_hash: true
+  theme_args:
+    simple_style: dark
+
+# Optional Redis cache (uncomment if you enable REDIS_URL in Railway)
+# redis:
+#   url: !env REDIS_URL
+
+engines:
+  # The key for each engine is its name (e.g., 'webcrawlerapi').
+  # The value is a dictionary of its configuration.
+
+  webcrawlerapi:
+    categories:
+      - general
+    api_key: !env WEBCRAWLERAPI_KEY
+    timeout: 5.0
+    disabled: false
+
+  webcrawlerapi_images:
+    categories:
+      - images
+    api_key: !env WEBCRAWLERAPI_KEY
+    timeout: 5.0
+    disabled: false
+
+# You can add or override other settings here as needed.
+# For example, to enable a specific default engine, you can set its disabled property to false:
+# engines:
+#   wikipedia:
+#     disabled: false

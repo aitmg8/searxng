@@ -1,23 +1,27 @@
 FROM docker.io/searxng/searxng:latest
 
-# Use the environment variables that Railway injects at build time (non-sensitive ones)
 ARG SEARXNG_BASE_URL
 ARG SEARXNG_UWSGI_WORKERS
 ARG SEARXNG_UWSGI_THREADS
 ARG PORT
 
-# Set Railway-specific environment variables
 ENV BASE_URL=${SEARXNG_BASE_URL}
 ENV PORT=${PORT:-8080}
 ENV UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS:-4}
 ENV UWSGI_THREADS=${SEARXNG_UWSGI_THREADS:-4}
+ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
 
-# Copy custom configuration to both locations (for volume mount scenarios)
+# Config
 COPY ./searxng /etc/searxng
 COPY ./searxng /etc/searxng-backup
 
-# Copy the entrypoint script
+# ✅ Copy your custom engines into SearxNG’s code path
+COPY ./searx/engines/webcrawlerapi*.py /usr/local/searxng/searx/engines/
+
+# (Optional: prove they’re there at build time)
+RUN ls -la /usr/local/searxng/searx/engines | sed -n '1,200p'
+
+# Entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]

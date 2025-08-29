@@ -1,41 +1,28 @@
-# ---- Base image ----
-FROM ghcr.io/searxng/searxng:latest
+FROM docker.io/searxng/searxng:latest
 
-# ---- Railway build-time args (optional) ----
 ARG SEARXNG_BASE_URL
 ARG SEARXNG_UWSGI_WORKERS
 ARG SEARXNG_UWSGI_THREADS
 ARG PORT
 
-# ---- Runtime env ----
 ENV BASE_URL=${SEARXNG_BASE_URL}
 ENV PORT=${PORT:-8080}
 ENV UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS:-4}
 ENV UWSGI_THREADS=${SEARXNG_UWSGI_THREADS:-4}
-
-# Point SearxNG to your config (change if your path differs)
 ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
 
-# ---- Copy config ----
-# Expecting repo layout:
-# searxng/settings.yml
-# searxng/ (any other config fragments you keep)
+# Config (your settings.yml lives under ./searxng)
 COPY ./searxng /etc/searxng
-# Optional backup for volume scenarios
 COPY ./searxng /etc/searxng-backup
 
-# ---- Copy custom engine code into the app path SearxNG imports from ----
-# Expecting repo layout:
-# searxng/searx/engines/webcrawlerapi.py
-# searxng/searx/engines/webcrawlerapi_images.py
-COPY ./engines/webcrawlerapi.py         /usr/local/searxng/searx/engines/
-COPY ./engines/webcrawlerapi_images.py  /usr/local/searxng/searx/engines/
+# ✅ Correct source paths for engines (pick one of the options)
+# Option A: copy the entire engines dir
+COPY ./searxng/searx/engines/ /usr/local/searxng/searx/engines/
+# Option B: copy individually (comment A if you use B)
+# COPY ./searxng/searx/engines/webcrawlerapi.py        /usr/local/searxng/searx/engines/
+# COPY ./searxng/searx/engines/webcrawlerapi_images.py /usr/local/searxng/searx/engines/
 
-# ---- Entrypoint (your script) ----
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# (Optional) Simple healthcheck for readiness
-# HEALTHCHECK --interval=30s --timeout=5s --retries=5 CMD wget -qO- "http://127.0.0.1:${PORT:-8080}/" > /dev/null || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]

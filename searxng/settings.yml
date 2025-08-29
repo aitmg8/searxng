@@ -16,7 +16,7 @@ search:
 server:
   # Will be picked up from SEARXNG_BASE_URL env in Docker
   base_url: !env BASE_URL
-  secret_key: "my-custom-secret-key-from-env" # It is highly recommended to set this as a secret in your Railway variables
+  secret_key: "my-custom-secret-key-from-env"
   limiter: false
   image_proxy: true
   port: !env PORT
@@ -31,9 +31,8 @@ ui:
 #   url: !env REDIS_URL
 
 engines:
-  # The key for each engine is its name (e.g., 'webcrawlerapi').
-  # The value is a dictionary of its configuration.
-
+  # This section must be a dictionary, not a list.
+  # The keys are the engine names, which must match the 'name' variable in the Python file.
   webcrawlerapi:
     categories:
       - general
@@ -47,9 +46,3 @@ engines:
     api_key: !env WEBCRAWLERAPI_KEY
     timeout: 5.0
     disabled: false
-
-# You can add or override other settings here as needed.
-# For example, to enable a specific default engine, you can set its disabled property to false:
-# engines:
-#   wikipedia:
-#     disabled: false

@@ -1,5 +1,4 @@
-# settings.yml for SearXNG
-# Docs: https://docs.searxng.org/admin/settings/settings.html
+# ✅ All corrections applied.
 
 use_default_settings: true
 
@@ -14,7 +13,6 @@ search:
     - csv
 
 server:
-  # Will be picked up from SEARXNG_BASE_URL env in Docker
   base_url: !env BASE_URL
   secret_key: "my-custom-secret-key-from-env"
   limiter: false
@@ -26,13 +24,11 @@ ui:
   theme_args:
     simple_style: dark
 
-# Optional Redis cache (uncomment if you enable REDIS_URL in Railway)
+# Optional Redis cache
 # redis:
 #   url: !env REDIS_URL
 
 engines:
-  # This section must be a dictionary, not a list.
-  # The keys are the engine names, which must match the 'name' variable in the Python file.
   webcrawlerapi:
     categories:
       - general
@@ -40,7 +36,8 @@ engines:
     timeout: 5.0
     disabled: false
 
-  webcrawlerapi_images:
+  # Renamed to use a hyphen to avoid the engine loader bug
+  webcrawlerapi-images:
     categories:
       - images
     api_key: !env WEBCRAWLERAPI_KEY
